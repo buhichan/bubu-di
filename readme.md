@@ -71,6 +71,12 @@ export function ServiceRegistry({children}:{children?:React.ReactNode}){
 
 // you can also provide different service in sub route: 
 
+function SomeSubRoute(){
+    return <SomeSubRouteServiceRegistry>
+        <SomeSubRouteChild />
+    </SomeSubRouteServiceRegistry>
+}
+
 export function SomeSubRouteServiceRegistry({children}:{children?:React.ReactNode}){
 
     const container = useService(IInstantiationService)
@@ -78,10 +84,18 @@ export function SomeSubRouteServiceRegistry({children}:{children?:React.ReactNod
     const subContainer = container.useNewNode()
 
     return pipe(
-        subContainer.provide(IA, A),
-        subContainer.provide(IB, B),
+        subContainer.provide(IA, AlternativeA),
     )(children)
 
+}
+
+function SomeSubRouteChild(){
+
+    const a = useService(IA) // here a is an instance of "AlternativeA"
+
+    const b = useService(IB) // if IInstantiationService cannot find a service registry, it will bubble up to its parent node, which will return an instance of BImpl
+
+    return <div></div>
 }
 
 ```

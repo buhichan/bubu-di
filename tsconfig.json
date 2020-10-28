@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "ESNext",
+        "importHelpers": true,
+        "declaration": true,
+        "moduleResolution": "node",
+        "noStrictGenericChecks": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "noImplicitThis": true,
+        "strict": true,
+        "removeComments": false,
+        "noImplicitAny": true,
+        "keyofStringsOnly": false,
+        "allowSyntheticDefaultImports": true,
+        "downlevelIteration": true,
+        "jsx": "react",
+        "outDir": "./dist",
+        "lib": ["es2016", "scripthost", "dom", "es2016.array.include", "esnext.asynciterable"],
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "lib", "dist", "demo","__test__", "services.js"]
+}

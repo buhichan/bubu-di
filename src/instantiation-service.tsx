@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Subject } from "rxjs"
 import { createServiceId, ServiceId } from "./service"
 import { CURRENT_INJECTOR } from "./inject"
 
@@ -41,7 +40,6 @@ export class InstantiationService implements IDisposable, IInstantiationService 
             inst.dispose?.()
         }
     }
-    private instChanged = new Subject()
     registerService<T, Arg extends any[]>(serviceId: ServiceId<T>, Impl: new (...args: Arg) => T, args: Arg): () => T {
         let lazyBinding = (this.bindingMap.get(serviceId as ServiceId) as unknown) as () => T
         if (!this.bindingMap.has(serviceId as ServiceId)) {
@@ -58,7 +56,6 @@ export class InstantiationService implements IDisposable, IInstantiationService 
                     delete Impl.prototype[CURRENT_INJECTOR]
                     inst[CURRENT_INJECTOR] = this
                     this.instanceMap.set(serviceId as ServiceId, inst)
-                    this.instChanged.next()
                     return inst
                 } else {
                     if (this.parent) {

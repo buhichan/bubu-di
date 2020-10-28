@@ -1,4 +1,21 @@
 
+# intro
+
+A lightweight dependency injection lib for react.
+- Typescript friendly 
+    - You should depend on interface, not on implementation or runtime typings.
+- Zero dependency 
+    - Does not depend on reflect-metadata.
+- Automatic instance creation and destruction based on react lifecycles.
+- When injecting service, support both class property decorator injection and react-hook injection.
+
+一个轻量级的react di库
+- Typescript 友好
+    - 你终于可以依赖interface来注入了, 而不是依赖实现或者其他什么运行时类型信息.
+- 零依赖 
+    - 甚至不依赖reflect-metadata
+- 跟组件生命周期同步的实例自动创建和销毁
+- 注入服务的时候, 既支持类属性装饰器, 又支持react-hook
 
 # usage
 

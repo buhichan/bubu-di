@@ -1,5 +1,5 @@
 
-# intro
+# Intro
 
 A lightweight dependency injection lib for react.
 - Typescript friendly 
@@ -17,7 +17,7 @@ A lightweight dependency injection lib for react.
 - 跟组件生命周期同步的实例自动创建和销毁
 - 注入服务的时候, 既支持类属性装饰器, 又支持react-hook
 
-# usage
+# Usage
 
 ```tsx
 
@@ -116,3 +116,8 @@ function SomeSubRouteChild(){
 }
 
 ```
+
+# Thanks
+
+- The injector idea comes from [react-ioc](https://github.com/gnaeus/react-ioc)
+- The service id idea comes from [vscode](https://github.com/Microsoft/vscode)

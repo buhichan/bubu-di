@@ -65,8 +65,7 @@ export function useServiceOptional<T>(serviceId: ServiceId<T>): T | null {
 }
 
 /**
- * 依赖一个服务, 需要注意的是我们并没有IOC容器, 也就是你需要显式地在useService的上层组件去new一个T的实现, 然后使用useProvider来提供T的实例
- * 为什么不用IOC容器, 因为用不到.
+ * 依赖一个服务, 需要在useService的上层组件去provide才能成功获取到服务实例.
  * @param serviceId 通过createServiceId创造的服务ID
  */
 export function useService<T>(serviceId: ServiceId<T>): T {

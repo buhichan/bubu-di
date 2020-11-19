@@ -47,31 +47,9 @@ export type ProvideAndInst<T> = [ServiceId<T>, () => T]
  * ```
  * @param name
  */
-export function createServiceId<T>(name: string, defaultValue?: ()=>T): ServiceId<T> {
+export function createServiceId<T>(name: string, defaultValue?: () => T): ServiceId<T> {
     return {
         name,
         context: React.createContext<() => T | null>(defaultValue || (() => null)),
     }
-}
-
-class ServiceResolutionError extends Error {
-    constructor(public cause: string) {
-        super(`未能解析的服务: ${cause.toString()}`)
-    }
-}
-
-export function useServiceOptional<T>(serviceId: ServiceId<T>): T | null {
-    return React.useContext(serviceId.context)()
-}
-
-/**
- * 依赖一个服务, 需要在useService的上层组件去provide才能成功获取到服务实例.
- * @param serviceId 通过createServiceId创造的服务ID
- */
-export function useService<T>(serviceId: ServiceId<T>): T {
-    const service = useServiceOptional(serviceId)
-    if (!service) {
-        throw new ServiceResolutionError(serviceId.name)
-    }
-    return service
 }

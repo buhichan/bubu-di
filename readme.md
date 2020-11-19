@@ -76,7 +76,11 @@ import {BImpl} from "b"
 
 export function ServiceRegistry({children}:{children?:React.ReactNode}){
 
-    const container = useService(IInstantiationService)
+    const container = useMemo(()=>new InstantiationService(),[])
+
+    useEffect(()=>()=>{
+        container.dispose()
+    },[])
 
     return pipe(
         container.provide(IA, AImpl, {aOption1: "bar"}),

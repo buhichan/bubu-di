@@ -9,30 +9,34 @@ export class InjectorResolutionError extends Error {
     }
 }
 
-export function inject<T>(serviceId: ServiceId<T>){
-    return function(proto: unknown, propName:string){
+export function inject<T>(serviceId: ServiceId<T>) {
+    return function (proto: unknown, propName: string) {
         Object.defineProperty(proto, propName, {
-            get(){
+            get() {
                 let injector = (this as Record<typeof CURRENT_INJECTOR, IInstantiationService>)[CURRENT_INJECTOR]
-                if(!injector){
+                if (!injector) {
                     injector = (proto as Record<typeof CURRENT_INJECTOR, IInstantiationService>)[CURRENT_INJECTOR]
                 }
-                if(!injector){
+                if (!injector) {
                     throw new InjectorResolutionError("Please only use @inject when service is instantialized by InstantiationService.")
                 }
-                return injector.get(serviceId)()
-            }
+                const res = injector.get(serviceId)()
+                if (!res) {
+                    throw new Error("Cannot resolve service: " + serviceId.name)
+                }
+                return res
+            },
         })
     }
 }
 
-export function injectOptional<T>(serviceId: ServiceId<T>){
-    return function(proto: unknown, propName:string){
+export function injectOptional<T>(serviceId: ServiceId<T>) {
+    return function (proto: unknown, propName: string) {
         Object.defineProperty(proto, propName, {
-            get(){
+            get() {
                 const injector = (proto as Record<typeof CURRENT_INJECTOR, unknown>)[CURRENT_INJECTOR] as IInstantiationService
-                return injector.get(serviceId)()
-            }
+                return injector?.get(serviceId)() || null
+            },
         })
     }
 }

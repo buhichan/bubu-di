@@ -86,9 +86,6 @@ export class InstantiationService implements IInstantiationService {
     }
     get<T>(serviceId: ServiceId<T>): () => T | null {
         const res = this.bindingMap.get(serviceId as ServiceId)
-        if (!res) {
-            throw new Error("Cannot resolve service: " + serviceId.name)
-        }
         return (res as unknown) as () => T
     }
 }

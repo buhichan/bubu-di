@@ -2,7 +2,7 @@ import "jest"
 import { Simulate, act } from "react-dom/test-utils"
 import { render } from "react-dom"
 import * as React from "react"
-import { createServiceId, IInstantiationService, inject, InstantiationService, useService, useServiceOptional } from "../src"
+import { createServiceId, IInstantiationService, inject, injectOptional, InstantiationService, useService, useServiceOptional } from "../src"
 
 function pipe<F extends readonly Function[]>(...f: F) {
     return (...args: any[]) => {
@@ -23,6 +23,11 @@ describe("basic test", () => {
         b(): string
     }
     const IB = createServiceId<IB>("IB")
+    
+    interface IC {
+        c(): string
+    }
+    const IC = createServiceId<IC>("IC")
 
     class AImpl implements IA {
         a() {
@@ -32,10 +37,15 @@ describe("basic test", () => {
 
     class BImpl implements IB {
         @inject(IA)
+        //@ts-ignore
         a!: IA
 
+        @injectOptional(IC)
+        //@ts-ignore
+        c!: IC
+
         b() {
-            return "hello " + this.a.a()
+            return (this.c == null ? "" : "???") + "hello " + this.a.a()
         }
     }
 

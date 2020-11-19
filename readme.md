@@ -1,3 +1,5 @@
+[![travis ci](https://travis-ci.com/buhichan/bubu-di.svg?branch=master)](https://travis-ci.com/buhichan/bubu-di)
+[![codecov](https://codecov.io/gh/buhichan/bubu-di/branch/master/graph/badge.svg)](https://codecov.io/gh/buhichan/bubu-di)
 
 # Intro
 

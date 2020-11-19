@@ -7,7 +7,8 @@
   "repository": "buhichan/bubu-di.git",
   "license": "MIT",
   "scripts": {
-    "build": "yarn tsc -p ."
+    "build": "yarn tsc -p .",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/react": "^16.9.54",

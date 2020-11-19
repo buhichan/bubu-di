@@ -4,9 +4,10 @@
   "description": "react dependency injection library",
   "main": "dist/index.js",
   "author": "buhichan",
+  "repository": "buhichan/bubu-di.git",
   "license": "MIT",
   "scripts": {
-    "build":"yarn tsc -p ."
+    "build": "yarn tsc -p ."
   },
   "devDependencies": {
     "@types/react": "^16.9.54",

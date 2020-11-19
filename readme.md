@@ -19,9 +19,11 @@ A lightweight dependency injection lib for react.
 
 # Usage
 
-```tsx
+把大象装冰箱有3步, 用bubu-di在react项目引入依赖注入却有4步.
 
-//interfaces.ts
+## Step1 创建一个接口
+
+```ts
 import {createServiceId} from "bubu-di"
 interface IA {
     a():string
@@ -33,17 +35,22 @@ interface IB {
 }
 export const IB = createServiceId<IB>("B")
 
-//a.ts
-class AImpl implements IA {
-    a(){
-        return "world"
-    }
-}
+```
 
+## Step2 实现这个接口
+
+```ts
 // b.ts
 import {inject} from "bubu-di"
 
+class AImpl extends IA {
+    a(){
+        return "hello world"
+    }
+}
+
 class BImpl implements IB {
+    //凡是由bubu-di来实例化的服务, 都可以注入别的由bubu-di实例化的服务, 例如
     @inject(IA)
     a: IA
 
@@ -51,8 +58,43 @@ class BImpl implements IB {
         return "hello"+ this.a.a()
     }
 }
+```
 
-// c.ts
+## Step3 在组件树上某个节点提供这个接口的实现
+
+注意这个pipe函数, bubu-di并不提供, 需要引入别的或者自己实现. 很多库都有类似函数, 例如redux的`compose()`也可以, 但是`compose`跟`pipe`顺序是相反的, 如果同一个里存在相互依赖需要注意这一点.
+
+```tsx
+import {use} from "bubu-di"
+import {pipe} from "rxjs"
+import {useService, IInstantiationService} from "bubu-di"
+import {IA,IB} from "interface"
+import {AImpl} from "a"
+import {BImpl} from "b"
+
+export function ServiceRegistry({children}:{children?:React.ReactNode}){
+
+    const container = useService(IInstantiationService)
+
+    return pipe(
+        container.provide(IA, AImpl, {aOption1: "bar"}),
+        container.provide(IB, BImpl),
+    )(children)
+}
+
+
+// somewhere else:
+// Main 组件及其下面所有子孙组件中就能注入IA和IB了
+function App(){
+    return <ServiceRegistry>
+        <Main />
+    </ServiceRegistry>
+}
+```
+
+## Step4 在需要用到服务接口的地方, 按接口注入依赖
+
+```tsx
 import {IB} from "interfaces"
 import {useService} from "bubu-di"
 
@@ -60,33 +102,20 @@ function C(){
     const b = useService(IB)
     return <div>{b.b()}</div>
 }
+```
 
-// in app root: 
+或者在第2步中提到的一样, 在服务之间互相注入.
 
-function App(){
-    return <ServiceRegistry>
-        <Main />
-    </ServiceRegistry>
+## Bonus 覆盖实现
+
+你可以在一个子树中覆盖某些接口的具体实现, 没有被覆盖的接口会继承父树提供的实现.
+
+```tsx
+class AlternativeA implments IA {
+    a(){
+        return "f*** this world"
+    }
 }
-
-// service-registry.ts
-import {pipe} from "rxjs"
-import {useService, IInstantiationService} from "bubu-di"
-import {IA,IB} from "interface"
-import {A} from "a"
-import {B} from "b"
-
-export function ServiceRegistry({children}:{children?:React.ReactNode}){
-
-    const container = useService(IInstantiationService)
-
-    return pipe(
-        container.provide(IA, A),
-        container.provide(IB, B),
-    )(children)
-}
-
-// you can also provide different service in sub route: 
 
 function SomeSubRoute(){
     return <SomeSubRouteServiceRegistry>
@@ -114,7 +143,6 @@ function SomeSubRouteChild(){
 
     return <div></div>
 }
-
 ```
 
 # Thanks

@@ -131,6 +131,9 @@ export function SomeSubRouteServiceRegistry({children}:{children?:React.ReactNod
 
     return pipe(
         subContainer.provide(IA, AlternativeA),
+        //由于IB依赖IA, 必须重新explicitly提供IB, 不然就会复用父级的IB
+        //explicit is better than implicit
+        subContainer.provide(IB, BImpl),
     )(children)
 
 }

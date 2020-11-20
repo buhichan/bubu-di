@@ -10,28 +10,39 @@ export class InjectorResolutionError extends Error {
     }
 }
 
-export function inject<T>(serviceId: ServiceId<T>) {
-    return function (proto: unknown, propName: string) {
-        Object.defineProperty(proto, propName, {
-            get() {
-                let injector = (this as Record<typeof CURRENT_INJECTOR, IInstantiationService>)[CURRENT_INJECTOR]
-                if (!injector) {
-                    injector = (proto as Record<typeof CURRENT_INJECTOR, IInstantiationService>)[CURRENT_INJECTOR]
-                }
-                if (!injector) {
-                    throw new InjectorResolutionError("Please only use @inject when service is instantialized by InstantiationService.")
-                }
-                const res = injector.get(serviceId)()
-                if (!res) {
-                    throw new ServiceResolutionError(serviceId.name)
-                }
-                return res
-            },
-        })
-    }
+type InjectOptions = {
+    optional?: boolean
 }
 
-export function injectOptional<T>(serviceId: ServiceId<T>) {
+const RESOLVE_CACHE = Symbol("RESOLVE_CACHE")
+
+function resolveInstance<T>(classInst: unknown, serviceId: ServiceId<T>, injector: IInstantiationService, options?: InjectOptions): T | null {
+    let cache = ((classInst as unknown) as Record<typeof RESOLVE_CACHE, Map<ServiceId<T>, T | null>>)[RESOLVE_CACHE]
+    if (!cache) {
+        cache = new Map()
+        Object.defineProperty(classInst, RESOLVE_CACHE, {
+            enumerable: false,
+            value: cache,
+        })
+    }
+    let res = cache.get(serviceId)
+    if (res !== undefined) {
+        return res
+    }
+    if (!injector && !options?.optional) {
+        throw new InjectorResolutionError("Please only use @inject when service is instantialized by InstantiationService.")
+    }
+    res = injector.get(serviceId)()
+    if (!res) {
+        if (!options?.optional) {
+            throw new ServiceResolutionError(serviceId.name)
+        }
+    }
+    cache.set(serviceId, res)
+    return res
+}
+
+export function inject<T>(serviceId: ServiceId<T>, options?: InjectOptions) {
     return function (proto: unknown, propName: string) {
         Object.defineProperty(proto, propName, {
             get() {
@@ -39,10 +50,7 @@ export function injectOptional<T>(serviceId: ServiceId<T>) {
                 if (!injector) {
                     injector = (proto as Record<typeof CURRENT_INJECTOR, IInstantiationService>)[CURRENT_INJECTOR]
                 }
-                if (!injector) {
-                    return null
-                }
-                return injector.get(serviceId)()
+                return resolveInstance<T>(this, serviceId, injector, options)
             },
         })
     }

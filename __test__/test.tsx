@@ -2,7 +2,7 @@ import "jest"
 import { Simulate, act } from "react-dom/test-utils"
 import { render, unmountComponentAtNode } from "react-dom"
 import * as React from "react"
-import { createServiceId, IDisposable, IInstantiationService, inject, injectOptional, InstantiationService, useService, useServiceOptional } from "../src"
+import { createServiceId, IDisposable, IInstantiationService, inject, InstantiationService, useService, useServiceOptional } from "../src"
 import { InjectorResolutionError, ServiceResolutionError } from "../src/inject"
 
 function pipe<F extends readonly Function[]>(...f: F) {
@@ -64,11 +64,11 @@ describe("basic usage", () => {
         //@ts-ignore
         a!: IA
 
-        @injectOptional(IC)
+        @inject(IC, { optional: true })
         //@ts-ignore
         c: IC | null
 
-        @injectOptional(ID)
+        @inject(ID, { optional: true })
         //@ts-ignore
         d: ID | null
         constructor() {
